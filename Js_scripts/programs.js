@@ -1,43 +1,83 @@
 let programs = [];
 
+const grid = document.getElementById("programsGrid");
+const searchBar = document.getElementById("searchBar");
+const categoryFilter = document.getElementById("categoryFilter");
+
 async function init() {
     try {
-        const response = await fetch('data/programs.json');
+        const response = await fetch("data/programs.json");
         programs = await response.json();
-        render(programs);
+        renderPrograms(programs);
     } catch (err) {
         console.error("Data fetch failed", err);
+        grid.innerHTML = `<p style="color:#9ca3af;">Failed to load programs.</p>`;
     }
 }
 
-function render(data) {
-    const grid = document.getElementById('programsGrid');
-    grid.innerHTML = data.map(p => `
-        <div class="card fade-in-up active">
-            <h4>${p.name}</h4>
-            <span class="badge">${p.category}</span>
-            <p style="margin: 15px 0;">${p.description}</p>
-            <div style="font-size: 14px; color: #555;">
-                <p><strong>Timeline:</strong> ${p.timeline}</p>
-                <p><strong>Stipend:</strong> ${p.stipend}</p>
+function renderPrograms(data) {
+    grid.innerHTML = "";
+
+    if (data.length === 0) {
+        grid.innerHTML = `<p style="color:#9ca3af;">No programs found.</p>`;
+        return;
+    }
+
+    data.forEach(program => {
+        const badgeClass =
+            program.difficulty === "Beginner Friendly"
+                ? "Beginner"
+                : program.difficulty;
+
+        const card = document.createElement("div");
+        card.className = "program-card fade-in-up active";
+
+        card.innerHTML = `
+            <h3 class="program-title">${program.name}</h3>
+            <p class="program-desc">${program.description}</p>
+
+            <div class="program-meta">
+                <span class="badge ${badgeClass}">
+                    ${program.difficulty || program.category}
+                </span>
+                <a class="program-link" href="${program.link}" target="_blank">
+                    Learn More →
+                </a>
             </div>
-            <a href="${p.link}" class="hero button" style="display:block; margin-top:20px; text-align:center; padding:10px; background:var(--secondary-blue); color:white; border-radius:6px;">View Guide</a>
-        </div>
-    `).join('');
-}
 
-function applyFilters() {
-    const search = document.getElementById('searchBar').value.toLowerCase();
-    const cat = document.getElementById('categoryFilter').value;
+            ${
+                program.timeline
+                    ? `<p><strong>Timeline:</strong> ${program.timeline}</p>`
+                    : ""
+            }
+            ${
+                program.stipend
+                    ? `<p><strong>Stipend:</strong> ${program.stipend}</p>`
+                    : ""
+            }
+        `;
 
-    const filtered = programs.filter(p => {
-        const matchesSearch = p.name.toLowerCase().includes(search);
-        const matchesCat = cat === 'all' || p.category === cat;
-        return matchesSearch && matchesCat;
+        grid.appendChild(card);
     });
-    render(filtered);
 }
 
-document.getElementById('searchBar').addEventListener('input', applyFilters);
-document.getElementById('categoryFilter').addEventListener('change', applyFilters);
-document.addEventListener('DOMContentLoaded', init);
+function filterPrograms() {
+    const searchText = searchBar.value.toLowerCase();
+    const category = categoryFilter.value;
+
+    const filtered = programs.filter(program => {
+        const matchesSearch = program.name.toLowerCase().includes(searchText);
+        const matchesCategory =
+            category === "all" ||
+            program.difficulty === category ||
+            program.category === category;
+
+        return matchesSearch && matchesCategory;
+    });
+
+    renderPrograms(filtered);
+}
+
+searchBar.addEventListener("input", filterPrograms);
+categoryFilter.addEventListener("change", filterPrograms);
+document.addEventListener("DOMContentLoaded", init);
