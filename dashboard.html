@@ -1,0 +1,828 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Dashboard - OpenSource Compass</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-blue: #1F3C88;
+            --secondary-blue: #4D96FF;
+            --light-gray: #F5F7FA;
+            --text-dark: #2E2E2E;
+            --success-green: #3CCF91;
+            --warning-orange: #FFA726;
+            --danger-red: #EF5350;
+            --white: #FFFFFF;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background-color: var(--light-gray);
+            color: var(--text-dark);
+            line-height: 1.6;
+        }
+
+        /* ---------- Navbar ---------- */
+        header {
+            background-color: var(--white);
+            border-bottom: 2px solid #eaeaea;
+            padding: 16px 8%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+
+        header h1 {
+            color: var(--primary-blue);
+            font-size: 22px;
+            cursor: pointer;
+        }
+
+        header h1:hover {
+            color: var(--secondary-blue);
+        }
+
+        nav a {
+            margin-left: 24px;
+            text-decoration: none;
+            color: var(--text-dark);
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+        nav a:hover {
+            color: var(--secondary-blue);
+        }
+
+        /* ---------- Dashboard Header ---------- */
+        .dashboard-header {
+            background: linear-gradient(135deg, var(--primary-blue) 0%, var(--secondary-blue) 100%);
+            color: var(--white);
+            padding: 40px 8%;
+            margin-bottom: 40px;
+        }
+
+        .dashboard-header h2 {
+            font-size: 36px;
+            margin-bottom: 12px;
+        }
+
+        .dashboard-header p {
+            font-size: 18px;
+            opacity: 0.9;
+        }
+
+        /* ---------- Filter Section ---------- */
+        .filter-section {
+            background-color: var(--white);
+            padding: 24px 8%;
+            margin-bottom: 32px;
+            display: flex;
+            gap: 16px;
+            align-items: center;
+            flex-wrap: wrap;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+
+        .filter-section label {
+            font-weight: 600;
+            color: var(--text-dark);
+        }
+
+        .filter-section select {
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            background-color: var(--white);
+            cursor: pointer;
+        }
+
+        .search-box {
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            width: 250px;
+        }
+
+        /* ---------- Programs Container ---------- */
+        .programs-container {
+            padding: 0 8%;
+            margin-bottom: 40px;
+        }
+
+        .program-card {
+            background-color: var(--white);
+            border-radius: 8px;
+            padding: 24px;
+            margin-bottom: 24px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            cursor: pointer;
+        }
+
+        .program-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.12);
+        }
+
+        .program-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 16px;
+        }
+
+        .program-header h3 {
+            color: var(--primary-blue);
+            font-size: 22px;
+        }
+
+        .program-status {
+            display: inline-block;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--white);
+        }
+
+        .status-active {
+            background-color: var(--success-green);
+        }
+
+        .status-upcoming {
+            background-color: var(--warning-orange);
+        }
+
+        .status-completed {
+            background-color: #9C27B0;
+        }
+
+        .program-description {
+            color: #666;
+            margin-bottom: 16px;
+            line-height: 1.5;
+        }
+
+        .program-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 16px;
+            margin-bottom: 16px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .detail-item {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .detail-label {
+            font-weight: 600;
+            color: var(--primary-blue);
+            font-size: 12px;
+            margin-bottom: 4px;
+        }
+
+        .detail-value {
+            color: var(--text-dark);
+            font-size: 14px;
+        }
+
+        .program-badges {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-bottom: 16px;
+        }
+
+        .badge {
+            display: inline-block;
+            background-color: #E3F2FD;
+            color: var(--primary-blue);
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .badge.difficulty-beginner {
+            background-color: #C8E6C9;
+            color: #2E7D32;
+        }
+
+        .badge.difficulty-intermediate {
+            background-color: #FFF9C4;
+            color: #F57F17;
+        }
+
+        .badge.difficulty-advanced {
+            background-color: #FFCCBC;
+            color: #D84315;
+        }
+
+        /* ---------- Stats Grid ---------- */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 12px;
+        }
+
+        .stat {
+            background-color: var(--light-gray);
+            padding: 12px;
+            border-radius: 6px;
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--secondary-blue);
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: #666;
+            margin-top: 4px;
+        }
+
+        /* ---------- Action Buttons ---------- */
+        .program-actions {
+            display: flex;
+            gap: 12px;
+            margin-top: 16px;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 10px 16px;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background-color: var(--secondary-blue);
+            color: var(--white);
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-blue);
+        }
+
+        .btn-secondary {
+            background-color: transparent;
+            color: var(--secondary-blue);
+            border: 2px solid var(--secondary-blue);
+        }
+
+        .btn-secondary:hover {
+            background-color: var(--secondary-blue);
+            color: var(--white);
+        }
+
+        /* ---------- Modal ---------- */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .modal-content {
+            background-color: var(--white);
+            margin: 5% auto;
+            padding: 32px;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 800px;
+            max-height: 80vh;
+            overflow-y: auto;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateY(-50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .close-btn {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+
+        .close-btn:hover {
+            color: var(--primary-blue);
+        }
+
+        .modal h2 {
+            color: var(--primary-blue);
+            margin-bottom: 16px;
+            margin-top: 16px;
+        }
+
+        .modal-section {
+            margin-bottom: 24px;
+        }
+
+        .modal-section h3 {
+            color: var(--secondary-blue);
+            font-size: 18px;
+            margin-bottom: 12px;
+            border-bottom: 2px solid #eee;
+            padding-bottom: 8px;
+        }
+
+        .contributions-list, .issues-list {
+            list-style: none;
+        }
+
+        .contributions-list li, .issues-list li {
+            padding: 10px;
+            margin-bottom: 8px;
+            background-color: var(--light-gray);
+            border-left: 4px solid var(--secondary-blue);
+            border-radius: 4px;
+        }
+
+        /* ---------- No Results ---------- */
+        .no-results {
+            text-align: center;
+            padding: 60px 8%;
+            color: #999;
+        }
+
+        .no-results h3 {
+            color: var(--text-dark);
+            margin-bottom: 12px;
+        }
+
+        /* ---------- Footer ---------- */
+        footer {
+            background-color: var(--primary-blue);
+            color: var(--white);
+            text-align: center;
+            padding: 24px;
+            margin-top: 40px;
+        }
+
+        footer p {
+            font-size: 14px;
+        }
+
+        /* ---------- Responsive ---------- */
+        @media (max-width: 768px) {
+            header {
+                flex-direction: column;
+                gap: 12px;
+            }
+
+            nav {
+                display: flex;
+                gap: 12px;
+                flex-wrap: wrap;
+            }
+
+            nav a {
+                margin-left: 0;
+            }
+
+            .dashboard-header h2 {
+                font-size: 28px;
+            }
+
+            .filter-section {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .search-box {
+                width: 100%;
+            }
+
+            .program-card {
+                padding: 16px;
+            }
+
+            .program-details {
+                grid-template-columns: 1fr;
+            }
+
+            .program-actions {
+                flex-direction: column;
+            }
+
+            .modal-content {
+                width: 95%;
+                margin: 20% auto;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<!-- Navbar -->
+<header>
+    <h1 onclick="window.location.href='index.html'">OpenSource Compass</h1>
+    <nav>
+        <a href="index.html">Home</a>
+        <a href="#">Guides</a>
+        <a href="dashboard.html">Programs</a>
+        <a href="#">Resources</a>
+        <a href="#">Contribute</a>
+    </nav>
+</header>
+
+<!-- Dashboard Header -->
+<div class="dashboard-header">
+    <h2>Open Source Programs Dashboard</h2>
+    <p>Explore diverse open-source programs, learn about their contributions, and find issues to work on</p>
+</div>
+
+<!-- Filter Section -->
+<div class="filter-section">
+    <label for="difficultyFilter">Difficulty:</label>
+    <select id="difficultyFilter">
+        <option value="">All Levels</option>
+        <option value="Beginner">Beginner</option>
+        <option value="Intermediate">Intermediate</option>
+        <option value="Advanced">Advanced</option>
+    </select>
+
+    <label for="statusFilter">Status:</label>
+    <select id="statusFilter">
+        <option value="">All Status</option>
+        <option value="Active">Active</option>
+        <option value="Upcoming">Upcoming</option>
+        <option value="Completed">Completed</option>
+    </select>
+
+    <input type="text" id="searchBox" class="search-box" placeholder="Search programs...">
+</div>
+
+<!-- Programs Container -->
+<div class="programs-container" id="programsContainer">
+    <!-- Programs will be dynamically inserted here -->
+</div>
+
+<!-- Modal for Program Details -->
+<div id="programModal" class="modal">
+    <div class="modal-content">
+        <span class="close-btn" onclick="closeModal()">&times;</span>
+        <div id="modalBody"></div>
+    </div>
+</div>
+
+<!-- Footer -->
+<footer>
+    <p>© 2025 OpenSource Compass • Built for the Open Source Community</p>
+</footer>
+
+<script>
+    // Program Data
+    const programs = [
+        {
+            id: 1,
+            name: "Google Summer of Code",
+            description: "Google's annual, international program focused on bringing more student developers into open source software development.",
+            status: "Active",
+            difficulty: "Advanced",
+            timeline: "May - August",
+            stipend: "$3000 - $6600",
+            contributors: 2000,
+            issues: 450,
+            organizations: 180,
+            contributions: [
+                "Bug fixes and feature implementations",
+                "Documentation improvements",
+                "Performance optimization",
+                "UI/UX enhancements"
+            ],
+            issues_list: [
+                "Fix pagination in search results",
+                "Implement dark mode support",
+                "Add multi-language support",
+                "Optimize database queries",
+                "Create user dashboard"
+            ]
+        },
+        {
+            id: 2,
+            name: "GirlScript Summer of Code",
+            description: "A nationwide summer program to inspire girls to explore technology and make their first meaningful open-source contribution.",
+            status: "Active",
+            difficulty: "Beginner",
+            timeline: "March - May",
+            stipend: "Certificates & Perks",
+            contributors: 1500,
+            issues: 320,
+            organizations: 120,
+            contributions: [
+                "Frontend development",
+                "Backend integration",
+                "API documentation",
+                "Testing and QA"
+            ],
+            issues_list: [
+                "Create landing page UI",
+                "Build contact form with validation",
+                "Add responsive design fixes",
+                "Implement search functionality",
+                "Write unit tests"
+            ]
+        },
+        {
+            id: 3,
+            name: "Hacktoberfest",
+            description: "Digital celebration of open source software. Make four quality pull requests during October and earn a limited edition t-shirt.",
+            status: "Upcoming",
+            difficulty: "Beginner",
+            timeline: "October 1-31",
+            stipend: "T-Shirt & Digital Badge",
+            contributors: 100000,
+            issues: 5000,
+            organizations: 500,
+            contributions: [
+                "Code improvements",
+                "Bug fixing",
+                "Documentation",
+                "Translation work"
+            ],
+            issues_list: [
+                "Fix typos in documentation",
+                "Add missing comments to code",
+                "Create README files",
+                "Fix broken links",
+                "Improve code formatting"
+            ]
+        },
+        {
+            id: 4,
+            name: "MLH Fellowship",
+            description: "A remote internship alternative for aspiring technologists. Get mentorship, build projects, and contribute to open source.",
+            status: "Active",
+            difficulty: "Intermediate",
+            timeline: "Year-round",
+            stipend: "$3000 - $5000",
+            contributors: 800,
+            issues: 380,
+            organizations: 90,
+            contributions: [
+                "Machine learning models",
+                "Data analysis projects",
+                "Web application development",
+                "Cloud infrastructure"
+            ],
+            issues_list: [
+                "Implement ML algorithm",
+                "Create data visualization dashboard",
+                "Optimize ML model performance",
+                "Write technical documentation",
+                "Build REST API endpoints"
+            ]
+        },
+        {
+            id: 5,
+            name: "Outreachy",
+            description: "Paid, remote internship program to support diversity in open source. Open to underrepresented groups in tech.",
+            status: "Upcoming",
+            difficulty: "Intermediate",
+            timeline: "May-August & Dec-March",
+            stipend: "$6000 - $7000",
+            contributors: 400,
+            issues: 200,
+            organizations: 60,
+            contributions: [
+                "Full-stack development",
+                "System administration",
+                "Community management",
+                "Technical writing"
+            ],
+            issues_list: [
+                "Refactor legacy code",
+                "Create deployment automation",
+                "Build admin interface",
+                "Write API documentation",
+                "Implement caching mechanism"
+            ]
+        },
+        {
+            id: 6,
+            name: "Social Winter of Code",
+            description: "A beginner-friendly winter program encouraging students to contribute to open source during winter break.",
+            status: "Completed",
+            difficulty: "Beginner",
+            timeline: "December - January",
+            stipend: "Certificates & Prizes",
+            contributors: 600,
+            issues: 150,
+            organizations: 45,
+            contributions: [
+                "Simple bug fixes",
+                "Documentation tasks",
+                "Code review practice",
+                "Community contributions"
+            ],
+            issues_list: [
+                "Add feature flag documentation",
+                "Fix CSS alignment issues",
+                "Create beginner guides",
+                "Improve test coverage",
+                "Add inline code comments"
+            ]
+        }
+    ];
+
+    // Render Programs
+    function renderPrograms(filteredPrograms = programs) {
+        const container = document.getElementById('programsContainer');
+        
+        if (filteredPrograms.length === 0) {
+            container.innerHTML = `
+                <div class="no-results">
+                    <h3>No programs found</h3>
+                    <p>Try adjusting your filters to see available programs</p>
+                </div>
+            `;
+            return;
+        }
+
+        container.innerHTML = filteredPrograms.map(program => `
+            <div class="program-card" onclick="openModal(${program.id})">
+                <div class="program-header">
+                    <h3>${program.name}</h3>
+                    <span class="program-status status-${program.status.toLowerCase()}">${program.status}</span>
+                </div>
+                
+                <p class="program-description">${program.description}</p>
+                
+                <div class="program-details">
+                    <div class="detail-item">
+                        <span class="detail-label">Timeline</span>
+                        <span class="detail-value">${program.timeline}</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Stipend/Reward</span>
+                        <span class="detail-value">${program.stipend}</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Contributors</span>
+                        <span class="detail-value">${program.contributors.toLocaleString()}</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Open Issues</span>
+                        <span class="detail-value">${program.issues}</span>
+                    </div>
+                </div>
+
+                <div class="program-badges">
+                    <span class="badge difficulty-${program.difficulty.toLowerCase()}">${program.difficulty}</span>
+                    <span class="badge">${program.organizations} Organizations</span>
+                </div>
+
+                <div class="program-actions">
+                    <button class="btn btn-primary" onclick="event.stopPropagation(); openModal(${program.id})">View Details</button>
+                    <button class="btn btn-secondary" onclick="event.stopPropagation(); viewIssues(${program.id})">View Issues</button>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    // Open Modal
+    function openModal(programId) {
+        const program = programs.find(p => p.id === programId);
+        const modalBody = document.getElementById('modalBody');
+        
+        modalBody.innerHTML = `
+            <h2>${program.name}</h2>
+            <p style="color: #666; margin-bottom: 16px;">${program.description}</p>
+            
+            <div class="modal-section">
+                <h3>Quick Info</h3>
+                <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px;">
+                    <div>
+                        <strong>Status:</strong> <span style="color: var(--secondary-blue);">${program.status}</span>
+                    </div>
+                    <div>
+                        <strong>Difficulty:</strong> <span style="color: var(--secondary-blue);">${program.difficulty}</span>
+                    </div>
+                    <div>
+                        <strong>Timeline:</strong> <span style="color: var(--secondary-blue);">${program.timeline}</span>
+                    </div>
+                    <div>
+                        <strong>Stipend:</strong> <span style="color: var(--secondary-blue);">${program.stipend}</span>
+                    </div>
+                    <div>
+                        <strong>Total Contributors:</strong> <span style="color: var(--secondary-blue);">${program.contributors.toLocaleString()}</span>
+                    </div>
+                    <div>
+                        <strong>Open Issues:</strong> <span style="color: var(--secondary-blue);">${program.issues}</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-section">
+                <h3>Types of Contributions</h3>
+                <ul class="contributions-list">
+                    ${program.contributions.map(c => `<li>✓ ${c}</li>`).join('')}
+                </ul>
+            </div>
+
+            <div class="modal-section">
+                <h3>Popular Issues to Work On</h3>
+                <ul class="issues-list">
+                    ${program.issues_list.map(i => `<li>🐛 ${i}</li>`).join('')}
+                </ul>
+            </div>
+
+            <div style="margin-top: 24px; display: flex; gap: 12px;">
+                <button class="btn btn-primary" onclick="alert('Redirecting to official website...')">Visit Official Website</button>
+                <button class="btn btn-secondary" onclick="alert('Redirecting to GitHub projects...')">Browse GitHub Projects</button>
+            </div>
+        `;
+
+        document.getElementById('programModal').style.display = 'block';
+    }
+
+    // Close Modal
+    function closeModal() {
+        document.getElementById('programModal').style.display = 'none';
+    }
+
+    // View Issues
+    function viewIssues(programId) {
+        const program = programs.find(p => p.id === programId);
+        alert(`Found ${program.issues} open issues in ${program.name}\n\nTop issues:\n${program.issues_list.slice(0, 3).map(i => '• ' + i).join('\n')}\n\nView more on GitHub!`);
+    }
+
+    // Filter Programs
+    function filterPrograms() {
+        const difficulty = document.getElementById('difficultyFilter').value;
+        const status = document.getElementById('statusFilter').value;
+        const search = document.getElementById('searchBox').value.toLowerCase();
+
+        const filtered = programs.filter(program => {
+            const matchesDifficulty = !difficulty || program.difficulty === difficulty;
+            const matchesStatus = !status || program.status === status;
+            const matchesSearch = !search || program.name.toLowerCase().includes(search) || program.description.toLowerCase().includes(search);
+            
+            return matchesDifficulty && matchesStatus && matchesSearch;
+        });
+
+        renderPrograms(filtered);
+    }
+
+    // Event Listeners
+    document.getElementById('difficultyFilter').addEventListener('change', filterPrograms);
+    document.getElementById('statusFilter').addEventListener('change', filterPrograms);
+    document.getElementById('searchBox').addEventListener('input', filterPrograms);
+
+    // Close modal when clicking outside
+    window.addEventListener('click', function(event) {
+        const modal = document.getElementById('programModal');
+        if (event.target === modal) {
+            closeModal();
+        }
+    });
+
+    // Initial render
+    renderPrograms();
+</script>
+
+</body>
+</html>
