@@ -445,6 +445,44 @@
                 font-size: 0.92rem;
             }
         }
+
+     /* ===============================
+   PROGRAMS CARD HOVER (GSSoC, SWoC etc.)
+   =============================== */
+
+.programs .card {
+  transition: 
+    transform 0.45s cubic-bezier(0.4, 0, 0.2, 1),
+    box-shadow 0.45s ease;
+  will-change: transform;
+}
+
+.programs .card:hover {
+  transform: scale(1.06) translateY(-10px);
+  box-shadow: 0 25px 55px rgba(0, 0, 0, 0.45);
+}
+
+/* ===============================
+   BADGE (Jan 2026) – EXTRA GLOW
+   =============================== */
+
+.programs .badge {
+  transition:
+    transform 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+    box-shadow 0.35s ease,
+    filter 0.35s ease;
+  cursor: pointer;
+}
+
+.programs .badge:hover {
+  transform: scale(1.3) translateY(-6px);
+  box-shadow:
+    0 0 15px rgba(212, 175, 55, 0.8),
+    0 0 30px rgba(212, 175, 55, 0.6),
+    0 0 45px rgba(212, 175, 55, 0.4);
+  filter: brightness(1.2);
+}
+   
     </style>
 </head>
 <body>
